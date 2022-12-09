@@ -1,0 +1,97 @@
+<template>
+  <div class="page page-home">
+    <div class="navbar no-shadow" style="color: white; height: 55px">
+      <div
+        class="navbar-bg"
+        style="background: url('img/header.png') fixed"></div>
+      <div class="navbar-inner">
+        <div class="title sliding">Tiket User</div>
+        <div class="right">
+          <a href="#" class="link back" style="color: white"
+            ><i class="icon f7-icons">xmark</i></a
+          >
+        </div>
+      </div>
+    </div>
+    <div
+      style="
+        background: url('img/above.png');
+        margin-top: 54px;
+        height: 3798px;
+      "></div>
+    <div class="page-content" style="margin-top: -3850px">
+      <!-- Isi Content -->
+      <div
+        class="card card-outline radius10"
+        style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px">
+        <div class="card card-content-padding">
+          <div class="row">
+            <div class="col-100">
+              <font style="font-size: 20px"><b>Tiket</b></font
+              ><br />
+              <div class="list">
+                <div class="item-content item-input">
+                  <div class="col-15">
+                    <div class="item-media">
+                      <i class="icon f7-icons">qrcode</i>
+                    </div>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title item-label">NIK</div>
+                    <div class="item-input-wrap" id="txtnikttt"></div>
+                  </div>
+                </div>
+                <div class="item-content item-input">
+                  <div class="col-15">
+                    <div class="item-media">
+                      <i class="icon f7-icons">person_crop_circle_fill</i>
+                    </div>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title item-label">POLI</div>
+                    <div class="item-input-wrap" id="txtnapttt"></div>
+                  </div>
+                </div>
+                <div class="item-content item-input">
+                  <div class="col-15">
+                    <div class="item-media">
+                      <i class="icon f7-icons">person_crop_circle_fill</i>
+                    </div>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title item-label">NAMA</div>
+                    <div class="item-input-wrap" id="txtnamattt"></div>
+                  </div>
+                </div>
+                <div class="item-content item-input">
+                  <div class="col-15">
+                    <div class="item-media">
+                      <i class="icon f7-icons">person_crop_circle_fill</i>
+                    </div>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title item-label">NOMER</div>
+                    <div class="item-input-wrap" id="txtantrianttt"></div>
+                  </div>
+                </div>
+                <div class="item-content item-input row">
+                  <button
+                    type="button"
+                    class="col button button-fill color-green"
+                    @click="${() => cetakpdf()}">
+                    Daftar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+  export default (props, ctx) => {
+    return $render;
+  };
+</script>

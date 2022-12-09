@@ -1,0 +1,29 @@
+{
+  "name": "com.mp.antrian",
+  "displayName": "antrian_online",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "cordova-android": "^10.1.0",
+    "cordova-pdf-generator": "^2.1.1",
+    "cordova-plugin-app-exit": "github:huangang/cordova-plugin-app-exit"
+  },
+  "cordova": {
+    "platforms": [
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-app-exit": {},
+      "cordova-pdf-generator": {}
+    }
+  }
+}
