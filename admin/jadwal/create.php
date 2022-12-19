@@ -5,7 +5,7 @@ require_once '../helper/connection.php';
 
 <section class="section">
     <div class="section-header d-flex justify-content-between">
-        <h1>Tambah Dokter</h1>
+        <h1>Tambah Jadwal Dokter</h1>
         <a href="./index.php" class="btn btn-light">Kembali</a>
     </div>
     <div class="row">
@@ -17,24 +17,37 @@ require_once '../helper/connection.php';
                         <table cellpadding="8" class="w-100">
                             <tr>
                                 <td>Nama Dokter</td>
-                                <td><input class="form-control" type="text" name="nama" size="20"
-                                        onkeypress="InputWord(event)" required></td>
+                                <td><input class="form-control" type="date" name="jadwal_dokter" size="20" onkeypress="InputWord(event)" required></td>
                             </tr>
                             <tr>
-                                <td>Jenis Kelamin</td>
+                                <td>Nama Dokter</td>
                                 <td>
-                                    <select class="form-control" name="jk" id="jk" required>
-                                        <option value="">--Pilih Jenis Kelamin--</option>
-                                        <option value="Pria">Pria</option>
-                                        <option value="Wanita">Wanita</option>
+                                    <select class="form-control" name="id_dokter" id="id_dokter" required>
+                                        <option value="<?= $row['id_dokter'] ?>">Jika tidak diubah biarkan</option>
+                                        <?php
+                                        while ($r = mysqli_fetch_array($dokter)) :
+                                        ?>
+                                            <option value="<?= $r['id_dokter'] ?>"><?= $r['nama'] ?></option>
+                                        <?php
+                                        endwhile;
+                                        ?>
                                     </select>
                                 </td>
                             </tr>
-
                             <tr>
-                                <td>Spesialis</td>
-                                <td colspan="3"><textarea class="form-control" name="spesialis" id="spesialis"
-                                        onkeypress="InputWord(event)" required></textarea></td>
+                                <td>Nama Poli</td>
+                                <td>
+                                    <select class="form-control" name="id_poli" id="id_poli" required>
+                                        <option value="<?= $row['id_poli'] ?>">Jika tidak diubah biarkan</option>
+                                        <?php
+                                        while ($r = mysqli_fetch_array($poli)) :
+                                        ?>
+                                            <option value="<?= $r['id_poli'] ?>"><?= $r['nama'] ?></option>
+                                        <?php
+                                        endwhile;
+                                        ?>
+                                    </select>
+                                </td>
                             </tr>
 
                             <tr>
@@ -43,6 +56,7 @@ require_once '../helper/connection.php';
                                     <input class="btn btn-danger" type="reset" name="batal" value="Bersihkan">
                                 </td>
                             </tr>
+
 
                         </table>
                     </form>

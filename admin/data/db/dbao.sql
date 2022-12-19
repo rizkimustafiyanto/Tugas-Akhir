@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 08, 2022 at 10:28 AM
+-- Generation Time: Dec 13, 2022 at 04:35 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -32,21 +32,9 @@ CREATE TABLE `antrian` (
   `no_antrian` varchar(12) NOT NULL,
   `waktu` datetime NOT NULL,
   `status` varchar(20) NOT NULL,
-  `id_poli` char(10) NOT NULL
+  `id_poli` char(10) NOT NULL,
+  `id_users` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `antrian`
---
-
-INSERT INTO `antrian` (`id`, `no_antrian`, `waktu`, `status`, `id_poli`) VALUES
-(117, 'E001', '2022-10-17 16:17:46', 'Dilewati', '5'),
-(118, 'E002', '2022-10-17 16:17:48', 'Dilewati', '5'),
-(119, 'E003', '2022-10-17 16:47:02', 'Selesai', '5'),
-(122, 'A001', '2022-10-18 18:46:14', 'Dilayani', '1'),
-(123, 'A002', '2022-10-18 18:46:16', 'Dilewati', '1'),
-(124, 'A003', '2022-10-18 18:46:18', 'Selesai', '1'),
-(127, 'A001', '2022-10-19 09:39:07', 'Dilayani', '1');
 
 -- --------------------------------------------------------
 
@@ -74,6 +62,27 @@ INSERT INTO `dokter` (`id_dokter`, `nama`, `jk`, `spesialis`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `jadwal_dok`
+--
+
+CREATE TABLE `jadwal_dok` (
+  `id` int(11) NOT NULL,
+  `jadwal_dokter` date NOT NULL,
+  `id_dokter` char(10) NOT NULL,
+  `id_poli` char(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `jadwal_dok`
+--
+
+INSERT INTO `jadwal_dok` (`id`, `jadwal_dokter`, `id_dokter`, `id_poli`) VALUES
+(1, '2022-12-01', '2', '1'),
+(2, '2022-12-02', '1', '18');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `poli`
 --
 
@@ -91,7 +100,7 @@ CREATE TABLE `poli` (
 --
 
 INSERT INTO `poli` (`id_poli`, `nama`, `deskripsi`, `loket`, `id_dokter`, `statu`) VALUES
-('1', 'ANAK & TUMBUH KEMBANG', '', 'A', '1', '1'),
+('1', 'ANAK & TUMBUH KEMBANG', 'Untuk Perawatan Anak', 'A', '1', '1'),
 ('10', 'JANTUNG & PEMBULUH DARAH', '', 'J', '1', '1'),
 ('11', 'ORTHOPEDI', '', 'K', '1', '1'),
 ('12', 'KULIT & KELAMIN', '', 'L', '1', '1'),
@@ -120,7 +129,9 @@ INSERT INTO `poli` (`id_poli`, `nama`, `deskripsi`, `loket`, `id_dokter`, `statu
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `nik` int(25) NOT NULL,
   `nama` varchar(225) NOT NULL,
+  `jenis_kelamin` varchar(255) NOT NULL,
   `username` varchar(20) NOT NULL,
   `password` varchar(20) NOT NULL,
   `level` varchar(20) NOT NULL,
@@ -131,10 +142,13 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `nama`, `username`, `password`, `level`, `id_poli`) VALUES
-(1, 'Andre', 'admin', '123456', '1', ''),
-(2, 'Siska', 'siska', '123456', '2', '1'),
-(3, 'Ajis', 'ajis', '123456', '2', '4');
+INSERT INTO `users` (`id`, `nik`, `nama`, `jenis_kelamin`, `username`, `password`, `level`, `id_poli`) VALUES
+(1, 0, 'Andre', 'L', 'admin', '123456', '1', ''),
+(2, 121, 'Siska', 'P', 'siska', '123456', '2', '1'),
+(3, 331, 'Ajis', 'L', 'ajis', '123456', '2', '4'),
+(4, 2, 'rika', 'Perempuan', '', '11', '0', ''),
+(5, 5, 'ainy', 'Laki-Laki', '', '22', '0', ''),
+(6, 123, 'Erik', 'Laki-Laki', '', '123', '0', '');
 
 --
 -- Indexes for dumped tables
@@ -152,6 +166,12 @@ ALTER TABLE `antrian`
 --
 ALTER TABLE `dokter`
   ADD PRIMARY KEY (`id_dokter`);
+
+--
+-- Indexes for table `jadwal_dok`
+--
+ALTER TABLE `jadwal_dok`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `poli`
@@ -175,13 +195,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `antrian`
 --
 ALTER TABLE `antrian`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+
+--
+-- AUTO_INCREMENT for table `jadwal_dok`
+--
+ALTER TABLE `jadwal_dok`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

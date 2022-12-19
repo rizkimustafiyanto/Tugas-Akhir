@@ -42,8 +42,13 @@ require_once '../../admin/helper/connection.php';
 
                 $no_antrianpoli = $huruf . $addNol . $incrementKode;
 
+                //Batas Tiket
+                $btiket = mysqli_query($connection, "SELECT COUNT(*) as jumlah FROM antrian WHERE id_users == 0 AND waktu LIKE '$tgl%'");
+                $rowtiket = mysqli_fetch_assoc($btiket);
+                $batastiket = $row['jumlah'];
+
             ?>
-                <?php if ($statu != 2 && $incrementKode <= 4) { ?>
+                <?php if ($statu != 2 && $batastiket <= 4) { ?>
                     <div class="col col-lg-2 col-md-6 text-center">
                         <div class="card text-bg-success lg-6 md-3 mb-10" style="height: 200px; cursor: pointer;" data-idpoli="<?= $idpoli; ?>" data-loket="<?= $huruf; ?>" data-nama="<?= $nama; ?>" data-antrian="<?= $no_antrianpoli; ?>" data-statu="<?= $statu; ?>" id="card-poli" onclick="update(this)">
                             <div class="card-header d-flex justify-content-center align-items-center">
@@ -165,7 +170,7 @@ require_once '../../admin/helper/connection.php';
                                     } else {
                                         printer.open().then(function() {
                                             printer.align('center')
-                                                .text("RSUD JOMBANG\n")
+                                                .text("RSUD PUSDIK\n")
                                                 .bold(true)
                                                 .font('A')
                                                 .mode('A', true, true, true, false)

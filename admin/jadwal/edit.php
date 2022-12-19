@@ -26,7 +26,7 @@ $poli = mysqli_query($connection, "SELECT * FROM poli");
                             <table cellpadding="8" class="w-100">
                                 <tr>
                                     <td>Jadwal</td>
-                                    <td><input class="form-control" type="date" name="jadwal_dokter" size="20" onkeypress="InputWord(event)" required value="<?= $row['jadwal_dokter'] ?>"></td>
+                                    <td><input class="form-control" type="date" name="jadwal_dok" size="20" onkeypress="InputWord(event)" required value="<?= $row['jadwal_dok'] ?>"></td>
                                 </tr>
                                 <tr>
                                     <td>Dokter</td>

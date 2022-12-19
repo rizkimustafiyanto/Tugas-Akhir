@@ -1,23 +1,51 @@
 <?php
 include '../config.php';
 
-$id_users = "4";
-$nik = "123";
-$password = "11";
-$id_poli = "2";
+function manipulasiTanggal($tgl, $jumlah = 1, $format = 'days')
+{
+    $currentDate = $tgl;
+    return date('Y-m-d H:i:s', strtotime($jumlah . ' ' . $format, strtotime($currentDate)));
+}
 
-$result = mysqli_query($koneksi, "SELECT COUNT(*) as jumlah FROM users");
-$row = mysqli_fetch_assoc($result);
-$count = $row['jumlah'];
-$no = (int)$count + 1;
+date_default_timezone_set('Asia/Jakarta');
+$tgl = date("Y-m-d H:i:s");
+$waktu = date("H:i:s");
+echo $tgl;
+echo "\n\n\n\n\n\n\t\t           ";
+echo $waktu;
+echo "\n\n\n\t\t\t      ";
 
-$sql = "SELECT * FROM users WHERE nik = '$nik'";
-$q = mysqli_query($koneksi, $sql);
-$data = mysqli_num_rows($q);
+$bookday = manipulasiTanggal($tgl, '2', 'days');
+echo $bookday;
+
+
+// $id_users = "4";
+// $nik = "1232";
+// $password = "11";
+// $id_poli = "2";
+
+// $result = mysqli_query($koneksi, "SELECT COUNT(*) as jumlah FROM users");
+// $row = mysqli_fetch_assoc($result);
+// $count = $row['jumlah'];
+// $no = (int)$count + 1;
+
+// $sql = "SELECT * FROM users WHERE nik = '$nik'";
+// $q = mysqli_query($koneksi, $sql);
+// $data = mysqli_num_rows($q);
+// if ($data == 1) {
+//     echo "apa";
+// } else {
+//     echo "salah";
+// }
+
+
+
+
+
 // while ($r = mysqli_fetch_array($q)) {
 //     $data[] = $r;
 // }
-echo json_encode($data);
+// echo json_encode($data);
 
 // echo json_encode($q);
 // if (mysqli_num_rows($q) == 0) {

@@ -15,7 +15,8 @@
   "devDependencies": {
     "cordova-android": "^10.1.0",
     "cordova-pdf-generator": "^2.1.1",
-    "cordova-plugin-app-exit": "github:huangang/cordova-plugin-app-exit"
+    "cordova-plugin-app-exit": "github:huangang/cordova-plugin-app-exit",
+    "cordova-plugin-timer": "^1.0.1"
   },
   "cordova": {
     "platforms": [
@@ -23,7 +24,8 @@
     ],
     "plugins": {
       "cordova-plugin-app-exit": {},
-      "cordova-pdf-generator": {}
+      "cordova-pdf-generator": {},
+      "cordova-plugin-timer": {}
     }
   }
 }

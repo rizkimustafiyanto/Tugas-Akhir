@@ -116,6 +116,14 @@ $antrian_dilayani = $data2['antrian_panggil'];
     <source src="audio/<?= $loket ?>.m4a" type="audio/x-m4a">
 </audio>
 
+<audio id="Pdua">
+    <source src="audio/Pdua.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="Ptiga">
+    <source src="audio/Ptiga.mp3" type="audio/mpeg">
+</audio>
+
 <script src="../../assets/js/jquery-3.6.0.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
@@ -352,32 +360,31 @@ $antrian_dilayani = $data2['antrian_panggil'];
         let audio_3 = document.getElementById('audio3');
         let audio_tujuan = document.getElementById('tujuan');
         let audio_loket = document.getElementById('loket');
+        let Pdua = document.getElementById('Pdua');
+        let Ptiga = document.getElementById('Ptiga');
 
-        bel.play();
-        setTimeout(() => {
-            perhatian.play()
-        }, 8100);
-        setTimeout(() => {
-            audio_huruf.play()
-        }, 10000);
-        setTimeout(() => {
-            audio_1.play()
-        }, 11000);
-        setTimeout(() => {
-            audio_2.play()
-        }, 11900);
-        setTimeout(() => {
-            audio_3.play()
-        }, 12900);
-        setTimeout(() => {
-            audio_tujuan.play()
-        }, 13500);
-        setTimeout(() => {
-            audio_loket.play()
-        }, 15500);
-
-        sendData();
-        showPanggilan();
+        // bel.play();
+        // setTimeout(() => {
+        //     perhatian.play()
+        // }, 8100);
+        // setTimeout(() => {
+        //     audio_huruf.play()
+        // }, 10000);
+        // setTimeout(() => {
+        //     audio_1.play()
+        // }, 11000);
+        // setTimeout(() => {
+        //     audio_2.play()
+        // }, 11900);
+        // setTimeout(() => {
+        //     audio_3.play()
+        // }, 12900);
+        // setTimeout(() => {
+        //     audio_tujuan.play()
+        // }, 13500);
+        // setTimeout(() => {
+        //     audio_loket.play()
+        // }, 15500);
 
         //buat jumlah klik
         var n, b;
@@ -385,11 +392,89 @@ $antrian_dilayani = $data2['antrian_panggil'];
         b = n.value;
         if (b == "1") {
             n.setAttribute('value', "2");
+            bel.play();
+            setTimeout(() => {
+                Pdua.play()
+            }, 8100);
+            setTimeout(() => {
+                perhatian.play()
+            }, 10100);
+            setTimeout(() => {
+                audio_huruf.play()
+            }, 12000);
+            setTimeout(() => {
+                audio_1.play()
+            }, 13900);
+            setTimeout(() => {
+                audio_2.play()
+            }, 14900);
+            setTimeout(() => {
+                audio_3.play()
+            }, 15500);
+            setTimeout(() => {
+                audio_tujuan.play()
+            }, 16500);
+            setTimeout(() => {
+                audio_loket.play()
+            }, 18500);
+            sendData();
+            showPanggilan();
         } else if (b == "2") {
+            bel.play();
+            setTimeout(() => {
+                Ptiga.play()
+            }, 8100);
+            setTimeout(() => {
+                perhatian.play()
+            }, 10100);
+            setTimeout(() => {
+                audio_huruf.play()
+            }, 12000);
+            setTimeout(() => {
+                audio_1.play()
+            }, 13900);
+            setTimeout(() => {
+                audio_2.play()
+            }, 14900);
+            setTimeout(() => {
+                audio_3.play()
+            }, 15500);
+            setTimeout(() => {
+                audio_tujuan.play()
+            }, 16500);
+            setTimeout(() => {
+                audio_loket.play()
+            }, 18500);
+            sendData();
+            showPanggilan();
             n.setAttribute('value', "3");
             jamkel();
             startTimer();
         } else {
+            bel.play();
+            setTimeout(() => {
+                perhatian.play()
+            }, 8100);
+            setTimeout(() => {
+                audio_huruf.play()
+            }, 10000);
+            setTimeout(() => {
+                audio_1.play()
+            }, 11000);
+            setTimeout(() => {
+                audio_2.play()
+            }, 11900);
+            setTimeout(() => {
+                audio_3.play()
+            }, 12900);
+            setTimeout(() => {
+                audio_tujuan.play()
+            }, 13500);
+            setTimeout(() => {
+                audio_loket.play()
+            }, 15500);
+            sendData();
+            showPanggilan();
             n.setAttribute('value', "1");
         }
     }
@@ -447,27 +532,7 @@ $antrian_dilayani = $data2['antrian_panggil'];
     let timerInterval = null;
     let remainingPathColor = COLOR_CODES.info.color;
 
-    document.getElementById("jam").innerHTML = `<div class="base-timer">
-  <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <g class="base-timer__circle">
-      <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle>
-      <path
-        id="base-timer-path-remaining"
-        stroke-dasharray="283"
-        class="base-timer__path-remaining ${remainingPathColor}"
-        d="
-          M 50, 50
-          m -45, 0
-          a 45,45 0 1,0 90,0
-          a 45,45 0 1,0 -90,0
-        "
-      ></path>
-    </g>
-  </svg>
-  <span id="base-timer-label" class="base-timer__label">${formatTime(
-    timeLeft
-  )}</span>
-</div>`;
+    document.getElementById("jam").innerHTML = '<div class="base-timer"><svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g class="base-timer__circle"> <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle> <path id="base-timer-path-remaining" stroke-dasharray="283" class="base-timer__path-remaining ${remainingPathColor}" d="M 50, 50 m -45, 0 a 45,45 0 1,0 90,0 a 45,45 0 1,0 -90,0"></path></g></svg><span id="base-timer-label" class="base-timer__label">${formatTime(timeLeft)}</span></div>';
 
 
     function onTimesUp() {

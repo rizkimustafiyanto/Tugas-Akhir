@@ -2,9 +2,9 @@
 session_start();
 require_once '../helper/connection.php';
 
-$id_dokter = $_GET['id_dokter'];
+$id = $_GET['id'];
 
-$result = mysqli_query($connection, "DELETE FROM dokter WHERE id_dokter='$id_dokter'");
+$result = mysqli_query($connection, "DELETE FROM jadwal_dok WHERE id='$id'");
 
 if (mysqli_affected_rows($connection) > 0) {
   $_SESSION['info'] = [

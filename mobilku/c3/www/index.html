@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minikum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent" />
+    <meta name="theme-color" content="#fff" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap:" />
+    <title>Antrian</title>
+    <link rel="stylesheet" href="core/framework7-bundle.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/jam.css" />
+    <link rel="stylesheet" href="css/custom.css" />
+    <link rel="apple-touch-icon" href="img/f7-icon-square.png" />
+    <link rel="icon" href="img/f7-icon.png" />
+  </head>
+
+  <body>
+    <div id="app">
+      <div
+        class="view view-main view-init safe-areas"
+        data-master-detail-breakpoint="768"
+        data-url="/home/"></div>
+    </div>
+    <script src="core/framework7-bundle.min.js"></script>
+    <script src="js/routes.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/highcharts.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.1/firebase-database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.2.61/jspdf.min.js"></script>
+    <script>
+      // Khusus Firebase
+      const firebaseConfig = {
+        apiKey: "AIzaSyD7ZByCdIRx7B_lIwYGcX4J9NG9_PkxxL0",
+        authDomain: "siantri.firebaseapp.com",
+        databaseURL:
+          "https://siantri-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "siantri",
+        storageBucket: "siantri.appspot.com",
+        messagingSenderId: "106626247639",
+        appId: "1:106626247639:web:e873bd63c82515d794f992",
+        measurementId: "G-0KYBJYRPEQ",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      var db = firebase.database();
+      var antrianFR = db.ref("antrian_dilayani");
+      var panggilanFR = db.ref("panggilan");
+
+      // baca data poli
+      antrianFR.on("value", bacaData);
+
+      // baca data panggilan
+      panggilanFR.on("value", panggilanData);
+
+      function bacaData(snap) {
+        let hasil = "";
+        snap.forEach((kolom) => {
+          let loket = kolom.val().loket;
+          let poli = kolom.val().nama_poli;
+          let nomor = kolom.val().nomor_dilayani;
+          let nomor_selanjutnya = kolom.val().nomor_selanjutnya;
+          let waktu = kolom.val().waktu_dilayani;
+          let status = kolom.val().status;
+
+          hasil +=
+            "<div  class='col-50' data-loket='" +
+            loket +
+            "' data-poli='" +
+            poli +
+            "' data-nomor1='" +
+            nomor +
+            "' data-nomor2='" +
+            nomor_selanjutnya +
+            "' data-waktu='" +
+            waktu +
+            "' data-status='" +
+            status +
+            "' onclick='detail_antrian(this)' style='text-align: center;'><div class='card' style='border-radius: 15px; box-shadow: 0px 4px rgba(0, 0, 0, 0.25);' ><div class='card-content card-content-padding'><font style='font-size: 17px;'>Antrian<br>" +
+            poli +
+            "</font><br><font style='font-size: 40px;'>" +
+            nomor +
+            "</font><br><font style='font-size: 1rem;'>" +
+            status +
+            "</font><br></div></div></div>";
+        });
+        $(".data-antrian").html(hasil);
+      }
+
+      function panggilanData(snap) {
+        let nomor = snap.val().nomor;
+        let poli = snap.val().poli;
+        let status = snap.val().status;
+
+        $("#nomor").html(nomor);
+        $("#poli").html(poli);
+        $("#status").html(status);
+      }
+
+      function detail_antrian(el) {
+        let loket = $(el).data("loket");
+        let poli = $(el).data("poli");
+        let nomor1 = $(el).data("nomor1"); // nomor dilayani
+        let nomor2 = $(el).data("nomor2"); // nomor selanjutnya
+        let waktu = $(el).data("waktu");
+        let status = $(el).data("status");
+
+        console.log(loket + poli + nomor1 + nomor2 + waktu + status);
+        app.views.main.router.navigate(
+          "/detailantrian/?loket=" +
+            loket +
+            "&poli=" +
+            poli +
+            "&nomor1=" +
+            nomor1 +
+            "&nomor2=" +
+            nomor2 +
+            "&waktu=" +
+            waktu +
+            "&status=" +
+            status
+        );
+      }
+
+      //Timer
+
+      // App Exit
+      function keluarin() {
+        console.log("Okee Selesai");
+        navigator.app.exitApp();
+      }
+      function kembali() {
+        console.log("Okee Selesai");
+        app.views.main.router.back();
+      }
+      //App Reload
+      function reloadhalaman() {
+        window.location.reload(true);
+      }
+
+      //Data User
+      //Lihat Data (Login)
+      function bacauser() {
+        var nik = $("#txtnikuu").val();
+        if (nik == "") {
+          app.dialog.alert("Ada Isian Yang Masih Kosong !", "Error");
+          return;
+        }
+        app.sheet.close();
+        app.dialog.progress("Mengecek Data Data....");
+        $.getJSON(
+          "https://antrianon.000webhostapp.com/apinative/api.php?fungsi=bacadata&nik=" +
+            nik,
+          function (result) {
+            app.dialog.close();
+            if (result != 0) {
+              let dt = "";
+              $.each(result, function (i, kolom) {
+                let nik = kolom.nik;
+                let nama = kolom.nama;
+                let jenis_kelamin = kolom.jenis_kelamin;
+                dt +=
+                  '<div class="card card-outline" data-nik="' +
+                  nik +
+                  '"onclick="keloladata(this)" style="margin-left: 10px;margin-right: 10px; margin-bottom: 10px; border-radius: 15px;"><div class="card-content card-content-padding"> <div class="row mb-10"><div class="col-20" style="font-size: 25px; text-align: center;"><img src="img/huruf.png" style="margin-bottom: 0px; display:block; margin-left: auto; margin-right: auto; text-align:center; width: 100%";></div><div class="col-80" style="font-size: 17px;"><b>' +
+                  nama +
+                  "</b><br>" +
+                  jenis_kelamin +
+                  "</div></div></div></div>";
+              });
+              $("#datauser").html(dt + "<br><br><br>");
+            } else {
+              console.log("GAGAl");
+              app.dialog.alert("Data Tidak Ditemukan", "Kosong");
+              $("#datatiket").html("");
+            }
+          }
+        );
+      }
+      //Tambah User
+      function setnilai(obyek, nilai) {
+        $(obyek).val(nilai);
+      }
+      function bersih() {
+        //Daftar User
+        $("#txtnik").val("");
+        $("#txtnama").val("");
+        $("#txtjk").val("");
+        $("#txtpassword").val("");
+        //Ubah User
+        $("#txtniku").val("");
+        $("#txtnamau").val("");
+        $("#txtjku").val("");
+        //Daftar Tiket
+        $("#txtnikt").val("");
+        $("#txtpasswordt").val("");
+        //Cari Tiket
+        $("#txtniktu").val("");
+        $("#txtpasswordtu").val("");
+      }
+      function tambahuser() {
+        let nik = $("#txtnik").val();
+        let nama = $("#txtnama").val();
+        let jk = $("#txtjk").val();
+        let password = $("#txtpassword").val();
+        if (nik == "" || nama == "" || jk == "" || password == "") {
+          app.dialog.alert("Ada Isian Yang Masih Kosong!", "Error");
+          return;
+        }
+        $.ajax({
+          url: "https://antrianon.000webhostapp.com/apinative/api.php",
+          method: "POST",
+          data: {
+            fungsi: "tambahdata",
+            nik: nik,
+            nama: nama,
+            jk: jk,
+            password: password,
+          },
+          cache: "false",
+          success: function (y) {
+            var x = atob(y);
+            var xx = x.split("|");
+            if (xx[0] == "1") {
+              app.dialog.alert(xx[1], "Berhasil", function () {
+                app.views.main.router.back();
+              });
+              bersih();
+            } else {
+              app.dialog.alert(xx[1], "Gagal");
+            }
+          },
+          error: function () {
+            app.dialog.alert("Koneksi API Gagal", "Error");
+          },
+        });
+      }
+
+      function keloladata(el) {
+        let nik = $(el).data("nik");
+        if (nik == "") {
+          app.dialog.alert("NIK tidak terdeteksi !", "Error");
+          return;
+        }
+        app.views.main.router.navigate("/kelolauser/");
+        app.dialog.progress("Filter Data....");
+        let url = "https://antrianon.000webhostapp.com/apinative/api.php";
+        $.getJSON(url, { fungsi: "filterdata", nik: nik }, function (result) {
+          app.dialog.close();
+          if (result != 0) {
+            $.each(result, function (i, kolom) {
+              let nama = kolom.nama;
+              let jk = kolom.jenis_kelamin;
+              let password = kolom.password;
+              $("#txtniku").html(nik);
+              $("#txtnamau").val(nama);
+              $("#txtjku").val(jk);
+              $("#txtpasswordu").val(password);
+            });
+          } else {
+            app.dialog.alert("Data User Tidak Ditemukan", "Info", function () {
+              app.views.main.router.back();
+            });
+          }
+        });
+      }
+
+      function ubahuser() {
+        let nik = $("#txtniku").html();
+        let nama = $("#txtnamau").val();
+        let jk = $("#txtjku").val();
+        let password = $("#txtpasswordu").val();
+        if (nik == "" || nama == "" || jk == "") {
+          app.dialog.alert("Ada Isian Yang Masih Kosong !", "Error");
+          return;
+        }
+        $.ajax({
+          url: "https://antrianon.000webhostapp.com/apinative/api.php",
+          method: "POST",
+          data: {
+            fungsi: "ubahdata",
+            nik: nik,
+            nama: nama,
+            jk: jk,
+            password: password,
+          },
+          cache: "false",
+          success: function (y) {
+            var x = atob(y);
+            var xx = x.split("|");
+            if (xx[0] == "1") {
+              app.dialog.alert(xx[1], "Berhasil", function () {
+                app.views.main.router.back();
+              });
+            } else {
+              app.dialog.alert(xx[1], "Gagal");
+            }
+          },
+          error: function () {
+            app.dialog.alert("Koneksi API Gagal", "Error");
+          },
+        });
+      }
+
+      function hapususer() {
+        let nik = $("#txtniku").html();
+        if (nik == "") {
+          app.dialog.alert("Ada Isian Yang Masih Kosong !", "Error");
+          return;
+        }
+        console.log("" + nik + "");
+        app.dialog.confirm(
+          "Anda Yakin Ingin Menghapus Data Ini?",
+          "Konfirmasi",
+          function () {
+            $.ajax({
+              url: "https://antrianon.000webhostapp.com/apinative/api.php",
+              method: "POST",
+              data: {
+                fungsi: "hapusdata",
+                nik: nik,
+              },
+              cache: "false",
+              success: function (y) {
+                var x = atob(y);
+                var xx = x.split("|");
+                if (xx[0] == "1") {
+                  app.dialog.alert(xx[1], "Berhasil", function () {
+                    app.views.main.router.back();
+                  });
+                } else {
+                  app.dialog.alert(xx[1], "Gagal");
+                }
+              },
+              error: function () {
+                app.dialog.alert("Koneksi API Gagal", "Error");
+              },
+            });
+          }
+        );
+      }
+
+      //Data Detail Antrian
+      function bacaantri() {
+        app.request.json(
+          "https://antrianon.000webhostapp.com/apinative/tiket/list.php",
+          function (data) {
+            if (data != 0) {
+              var jlh = data.length;
+              var i = "";
+              var buatCard = "";
+              for (i = 0; i < jlh; i++) {
+                let nikuser = data[i].nik;
+                let nomernya = data[i].antrian;
+                let namauser = data[i].nama_user;
+                let namapoli = data[i].nama_poli;
+                let status = data[i].status;
+                if (status == "Belum") {
+                  buatCard +=
+                    '<div class="card card-outline" style="margin: 0px 10px 10px 10px; border-radius: 15px;">' +
+                    '<div class="card-content card-content-padding">' +
+                    '<div class="row mb-10"><div class="col-20" style="font-size: 25px; text-align: center;">' +
+                    '<img src="img/logo.png" style="display: block;margin-left: auto;margin-right: auto;text-align: center;width: 100%;height:100%;"></div><div class="col-80" style="font-size: 17px;"><b>' +
+                    nomernya +
+                    " " +
+                    namapoli +
+                    "</b><br>" +
+                    namauser +
+                    "</div></div></div></div>";
+                } else {
+                  buatCard +=
+                    '<div class="card card-outline" style="margin: 0px 10px 10px 10px; border-radius: 15px;">' +
+                    '<div class="card-content card-content-padding">' +
+                    '<div class="row mb-10"><div class="col-20" style="font-size: 25px; text-align: center;">' +
+                    '<img src="img/logo.png" style="display: block;margin-left: auto;margin-right: auto;text-align: center;width: 100%;height:100%;"></div><div class="col-80" style="font-size: 17px;"><b>' +
+                    nomernya +
+                    " " +
+                    namapoli +
+                    "</b><br>" +
+                    namauser +
+                    '<div class="base-timer"><svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><g class="base-timer__circle"> <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45"></circle> <path id="base-timer-path-remaining" stroke-dasharray="283" class="base-timer__path-remaining ${remainingPathColor}" d="M 50, 50 m -45, 0 a 45,45 0 1,0 90,0 a 45,45 0 1,0 -90,0"></path></g></svg><span id="base-timer-label" class="base-timer__label">${formatTime(timeLeft)}</span></div>' +
+                    "</div></div></div></div>";
+                }
+              }
+              //
+              //untuk pop up modal
+
+              const FULL_DASH_ARRAY = 333;
+              const WARNING_THRESHOLD = 5;
+              const ALERT_THRESHOLD = 2;
+
+              const COLOR_CODES = {
+                info: {
+                  color: "green",
+                },
+                warning: {
+                  color: "orange",
+                  threshold: WARNING_THRESHOLD,
+                },
+                alert: {
+                  color: "red",
+                  threshold: ALERT_THRESHOLD,
+                },
+              };
+
+              const TIME_LIMIT = 10;
+              let timePassed = 0;
+              let timeLeft = TIME_LIMIT;
+              let timerInterval = null;
+              let remainingPathColor = COLOR_CODES.info.color;
+
+              function onTimesUp() {
+                clearInterval(timerInterval);
+              }
+
+              function startTimer() {
+                timerInterval = setInterval(() => {
+                  timePassed = timePassed += 1;
+                  timeLeft = TIME_LIMIT - timePassed;
+                  $("#base-timer-label").html(formatTime(timeLeft));
+                  setCircleDasharray();
+                  setRemainingPathColor(timeLeft);
+
+                  if (timeLeft === 0) {
+                    onTimesUp();
+                  }
+                }, 1000);
+              }
+
+              function formatTime(time) {
+                const minutes = Math.floor(time / 60);
+                let seconds = time % 60;
+
+                if (seconds < 10) {
+                  seconds = `0${seconds}`;
+                }
+
+                return `${minutes}:${seconds}`;
+              }
+
+              function setRemainingPathColor(timeLeft) {
+                const { alert, warning, info } = COLOR_CODES;
+                if (timeLeft <= alert.threshold) {
+                  document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.remove(warning.color);
+                  document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.add(alert.color);
+                } else if (timeLeft <= warning.threshold) {
+                  document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.remove(info.color);
+                  document
+                    .getElementById("base-timer-path-remaining")
+                    .classList.add(warning.color);
+                }
+              }
+
+              function calculateTimeFraction() {
+                const rawTimeFraction = timeLeft / TIME_LIMIT;
+                return (
+                  rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction)
+                );
+              }
+
+              function setCircleDasharray() {
+                const circleDasharray = `${(
+                  calculateTimeFraction() * FULL_DASH_ARRAY
+                ).toFixed(0)} 283`;
+                document
+                  .getElementById("base-timer-path-remaining")
+                  .setAttribute("stroke-dasharray", circleDasharray);
+              }
+              //
+              $("#datatiket").html(buatCard);
+              startTimer();
+            } else {
+              $("#datatiket").html("");
+            }
+          }
+        );
+      }
+
+      //Jadwal Dokter
+      function bacadokter() {
+        app.request.json(
+          "https://antrianon.000webhostapp.com/apinative/listdokter.php",
+          function (data) {
+            if (data != 0) {
+              var jlh = data.length;
+              var i = "";
+              var buatCard = "";
+              for (i = 0; i < jlh; i++) {
+                let jadwal = data[i].jadwal_dokter;
+                let nama_dokter = data[i].nama_dokter;
+                let namapoli = data[i].nama_poli;
+                buatCard +=
+                  '<div class="card card-outline" style="margin: 0px 10px 10px 10px; border-radius: 15px;">' +
+                  '<div class="card-content card-content-padding">' +
+                  '<div class="row mb-10"><div class="col-20" style="font-size: 25px; text-align: center;">' +
+                  '<img src="img/logo.png" style="display: block;margin-left: auto;margin-right: auto;text-align: center;width: 100%;height:100%;"></div><div class="col-80" style="font-size: 17px;"><b>' +
+                  jadwal +
+                  "   |   " +
+                  nama_dokter +
+                  "</b><br>" +
+                  namapoli +
+                  "</div></div></div></div>";
+              }
+              $("#datadokter").html(buatCard);
+            } else {
+              $("#datadokter").html("");
+            }
+          }
+        );
+      }
+
+      //Daftar Poli
+      function bacapoli() {
+        app.dialog.progress("Akses Data....");
+        let url =
+          "https://antrianon.000webhostapp.com/apinative/tiket/tiket.php";
+        $.getJSON(url, { fungsi: "bacadata" }, function (result) {
+          app.dialog.close();
+          if (result != 0) {
+            let dt = "";
+            $.each(result, function (i, kolom) {
+              let id_poli = kolom.id_poli;
+              let nama = kolom.nama;
+              let loket = kolom.loket;
+              dt +=
+                '<div class="card card-outline" data-id_poli="' +
+                id_poli +
+                '"onclick="kelolatiket(this)" style="margin-left: 10px;margin-right: 10px; margin-bottom: 10px; border-radius: 15px;"><div class="card-content card-content-padding"> <div class="row mb-10"><div class="col-20" style="font-size: 25px; text-align: center;"><img src="img/huruf.png" style="margin-bottom: 0px; display:block; margin-left: auto; margin-right: auto; text-align:center; width: 100%";></div><div class="col-80" style="font-size: 17px;"><b>' +
+                nama +
+                "</b><br>" +
+                loket +
+                "</div></div></div></div>";
+            });
+            $("#datapoli").html(dt + "<br><br><br>");
+          } else {
+            $("#datapoli").html("");
+          }
+        });
+      }
+      //Kelola Tiket
+      function kelolatiket(el) {
+        let id_poli = $(el).data("id_poli");
+        if (id_poli == "") {
+          app.dialog.alert("id_poli tidak terdeteksi !", "Error");
+          return;
+        }
+        app.views.main.router.navigate("/daftartiket/");
+        app.dialog.progress("Filter Data....");
+        let url =
+          "https://antrianon.000webhostapp.com/apinative/tiket/tiket.php";
+        $.getJSON(
+          url,
+          { fungsi: "filterdata", id_poli: id_poli },
+          function (result) {
+            app.dialog.close();
+            if (result != 0) {
+              $.each(result, function (i, kolom) {
+                let nama = kolom.nama;
+                $("#txtid_polit").html(id_poli);
+                $("#txtnamat").html(nama);
+              });
+            } else {
+              app.dialog.alert(
+                "Data User Tidak Ditemukan",
+                "Info",
+                function () {
+                  app.views.main.router.back();
+                }
+              );
+            }
+          }
+        );
+      }
+      // Daftar Tiket
+      function daftartiket() {
+        let id_poli = $("#txtid_polit").html();
+        let nik = $("#txtnikt").val();
+        let password = $("#txtpasswordt").val();
+        if (nik == "" || password == "") {
+          app.dialog.alert("Ada Isian Yang Masih Kosong !", "Error");
+          return;
+        }
+        $.ajax({
+          url: "https://antrianon.000webhostapp.com/apinative/tiket/tiket.php",
+          method: "POST",
+          data: {
+            fungsi: "ubahdata",
+            nik: nik,
+            id_poli: id_poli,
+            password: password,
+          },
+          cache: "false",
+          success: function (y) {
+            var x = atob(y);
+            var xx = x.split("|");
+            if (xx[0] == "1") {
+              app.dialog.alert(xx[1], "Berhasil", function () {
+                app.views.main.router.back();
+              });
+            } else {
+              app.dialog.alert(xx[1], "Gagal");
+            }
+          },
+          error: function () {
+            app.dialog.alert("Koneksi API Gagal", "Error");
+          },
+        });
+      }
+      //Lihat Tiket
+      function lihattiket() {
+        var nik = $("#txtniktu").val();
+        var password = $("#txtpasswordtu").val();
+        if (nik == "" || password == "") {
+          app.dialog.alert("Ada Isian Yang Masih Kosong !", "Error");
+          return;
+        }
+        app.sheet.close();
+        app.dialog.progress("Mengecek Data Data....");
+        $.getJSON(
+          "https://antrianon.000webhostapp.com/apinative/lihattiket.php?data=lihatdata&nik=" +
+            nik +
+            "&password=" +
+            password,
+          function (result) {
+            app.dialog.close();
+            if (result != 0) {
+              let dt = "";
+              $.each(result, function (i, kolom) {
+                let id_antrian = kolom.id;
+                let id_poli = kolom.id_poli;
+                let id_users = kolom.id_users;
+                let nuser = kolom.no_antrian;
+                dt +=
+                  '<div class="card card-outline" data-id="' +
+                  id_antrian +
+                  '"onclick="kelolatiketuser(this)" style="margin-left: 10px;margin-right: 10px; margin-bottom: 10px; border-radius: 15px;"><div class="card-content card-content-padding"> <div class="row mb-10"><div class="col-20" style="font-size: 25px; text-align: center;"><img src="img/huruf.png" style="margin-bottom: 0px; display:block; margin-left: auto; margin-right: auto; text-align:center; width: 100%";></div><div class="col-80" style="font-size: 17px;"><b>' +
+                  nuser +
+                  "</b><br>" +
+                  id_poli +
+                  "</div></div></div></div>";
+              });
+              $("#datatiket").html(dt + "<br><br><br>");
+            } else {
+              app.dialog.alert("Data Tidak Ditemukan", "Kosong");
+              $("#datatiket").html("");
+            }
+          }
+        );
+      }
+
+      function kelolatiketuser(el) {
+        let id_antrian = $(el).data("id");
+        if (id_antrian == "") {
+          app.dialog.alert("ID Antrian tidak terdeteksi !", "Error");
+          return;
+        }
+        console.log("Masuk Bro");
+        app.views.main.router.navigate("/tiketuser/");
+        app.dialog.progress("Filter Data....");
+        let url =
+          "https://antrianon.000webhostapp.com/apinative/lihattiket.php";
+        $.getJSON(
+          url,
+          { data: "filterdata", id_antrian: id_antrian },
+          function (result) {
+            console.log("Berhasil");
+            app.dialog.close();
+            if (result != 0) {
+              let kontenpdf = "";
+              $.each(result, function (i, kolom) {
+                let nik = kolom.nik;
+                let nama_poli = kolom.nama_poli;
+                let nama_user = kolom.nama_user;
+                let nomer_antrian = kolom.antrian;
+                $("#txtnikttt").html(nik);
+                $("#txtnapttt").html(nama_poli);
+                $("#txtnamattt").html(nama_user);
+                $("#txtantrianttt").html(nomer_antrian);
+                kontenpdf +=
+                  '<div class="card card-outline radius10"style="margin-left: 10px; margin-right: 10px; margin-bottom: 10px"><div class="card card-content-padding"><div class="row"><div class="col-100"><font style="font-size: 20px"><b>Tiket</b></font><br /><div class="list"><div class="item-content item-input"><div class="col-15"><div class="item-media"><i class="icon f7-icons">qrcode</i></div></div><div class="item-inner"><div class="item-title item-label">NIK</div><div class="item-input-wrap">' +
+                  nik +
+                  '</div></div></div><div class="item-content item-input"><div class="col-15"><div class="item-media"><i class="icon f7-icons"></i></div></div><div class="item-inner"><div class="item-title item-label">POLI</div><div class="item-input-wrap" >' +
+                  nama_poli +
+                  '</div></div></div><div class="item-content item-input"><div class="col-15"><div class="item-media"><i class="icon f7-icons"></i></div></div><div class="item-inner"><div class="item-title item-label">NAMA</div><div class="item-input-wrap" >' +
+                  nama_user +
+                  '</div></div></div><div class="item-content item-input"><div class="col-15"><div class="item-media"><i class="icon f7-icons"></i></div></div><div class="item-inner"><div class="item-title item-label">NOMER</div><div class="item-input-wrap" >' +
+                  nomer_antrian +
+                  "</div></div></div></div></div></div></div></div>";
+              });
+              $("#kontencetak").html(kontenpdf);
+            } else {
+              app.dialog.alert(
+                "Data User Tidak Ditemukan",
+                "Info",
+                function () {
+                  app.views.main.router.back();
+                }
+              );
+            }
+          }
+        );
+      }
+      //Data Pengambilan Tiket
+      function cetakpdf() {
+        var doc = new jsPDF();
+
+        doc.fromHTML($("#kontencetak").html(), 15, 15, {
+          width: 50,
+        });
+        doc.save("tiket-file.pdf");
+      }
+    </script>
+  </body>
+</html>

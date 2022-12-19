@@ -1,0 +1,25 @@
+<p id="demo"></p>
+<p id="dem"></p>
+
+<script>
+  const startingMinutes = 1 / 6;
+  let time = startingMinutes * 60;
+
+  const sountdownEl = document.getElementById("demo");
+
+  function updateCountdown() {
+    const minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+    sountdownEl.innerHTML = minutes + ":" + seconds;
+    time--;
+  }
+  let a = setInterval(updateCountdown, 1000);
+  a;
+  clearInterval(a);
+  // Display the result in the element with id="demo"
+
+  // If the count down is finished, write some text
+</script>
