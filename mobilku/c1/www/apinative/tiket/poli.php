@@ -4,16 +4,17 @@ include '../config.php';
 function manipulasiTanggal($tgl, $jumlah = 1, $format = 'days')
 {
     $currentDate = $tgl;
-    return date('Y-m-d H:i:s', strtotime($jumlah . ' ' . $format, strtotime($currentDate)));
+    return date('Y-m-d', strtotime($jumlah . ' ' . $format, strtotime($currentDate)));
 }
 
 date_default_timezone_set('Asia/Jakarta');
 $tgl = date("Y-m-d H:i:s");
-$waktu = date("H:i:s");
+$waktu = date("Y-m-d");
 echo $tgl;
-echo "\n\n\n\n\n\n\t\t           ";
-echo $waktu;
-echo "\n\n\n\t\t\t      ";
+echo "\n\n\n\n\n\n\t\t Bookday1           ";
+$bookday1 = manipulasiTanggal($waktu, '2', 'days');
+echo $bookday1;
+echo "\n\n\n\t\t\t      Bookday";
 
 $bookday = manipulasiTanggal($tgl, '2', 'days');
 echo $bookday;

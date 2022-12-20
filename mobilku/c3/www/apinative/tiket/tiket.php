@@ -43,6 +43,34 @@ if (isset($_REQUEST["fungsi"])) {
             echo base64_encode("0|Password Salah");
             exit;
         }
+        date_default_timezone_set('Asia/Jakarta');
+        $tgl = date("Y-m-d");
+        function manipulasiTanggal($waktu, $jumlah = 1, $format = 'days')
+        {
+            $currentDate = $waktu;
+            return date('Y-m-d H:i:s', strtotime($jumlah . ' ' . $format, strtotime($currentDate)));
+        }
+        function manipulasiWaktu($wak, $jumlah = 1, $format = 'days')
+        {
+            $currentDate = $wak;
+            return date('Y-m-d', strtotime($jumlah . ' ' . $format, strtotime($currentDate)));
+        }
+        $waktu = date("Y-m-d H:i:s");
+        $wak = date("Y-m-d");
+        $bookday = manipulasiTanggal($waktu, '1', 'days');
+        $lineday = manipulasiWaktu($wak, '1', 'days');
+        $status = "Belum";
+
+        $batasjam = date("H:i:s");
+        //Untuk Batas Ambil Tiket
+        $btiket = mysqli_query($koneksi, "SELECT COUNT(*) as jumlah FROM antrian WHERE id_users != 0 AND waktu LIKE '$lineday%'");
+        $rowtiket = mysqli_fetch_assoc($btiket);
+        $batastiket = $rowtiket['jumlah'];
+
+        if ($batastiket >= 3 && ($batasjam >= 00.00 && $batasjam <= 23.20)) {
+            echo base64_encode("0|Tiket Habis Atau Sudah Tutup Silahkan Pilih Poli Lain");
+            exit;
+        }
 
         $poli = mysqli_query($koneksi, "SELECT loket,nama AS nam_pol FROM poli WHERE id_poli = '$id_poli'");
         if (mysqli_num_rows($poli) > 0) {
@@ -53,9 +81,7 @@ if (isset($_REQUEST["fungsi"])) {
         } else {
             echo "0 results";
         }
-        date_default_timezone_set('Asia/Jakarta');
-        $tgl = date("Y-m-d");
-        $queryp = mysqli_query($koneksi, "SELECT max(no_antrian) as no_antrianTerbesar FROM antrian WHERE no_antrian LIKE '$huruf%' AND waktu LIKE '$tgl%'");
+        $queryp = mysqli_query($koneksi, "SELECT max(no_antrian) as no_antrianTerbesar FROM antrian WHERE no_antrian LIKE '$huruf%' AND waktu LIKE '$lineday%'");
         $datapoli = mysqli_fetch_array($queryp);
         $no_antrianpoli = $datapoli['no_antrianTerbesar'];
         // mengambil angka dari no_antrian barang terbesar, menggunakan fungsi substr
@@ -64,15 +90,6 @@ if (isset($_REQUEST["fungsi"])) {
         // bilangan yang diambil ini ditambah 1 untuk menentukan nomor urut berikutnya
         $urutan++;
 
-        $batasjam = date("H:i:s");
-        //Untuk Batas Ambil Tiket
-        $btiket = mysqli_query($koneksi, "SELECT COUNT(*) as jumlah FROM antrian WHERE id_users != 0 AND waktu LIKE '$tgl%'");
-        $rowtiket = mysqli_fetch_assoc($btiket);
-        $batastiket = $row['jumlah'];
-        if ($batastiket >= 10 && $batasjam >= 00.00 && $batasjam <= 23.20) {
-            echo base64_encode("0|Tiket Habis Silahkan Pilih Poli Lain Atau Sudah Tutup");
-            exit;
-        }
         // membentuk no_antrian barang baru
         // perintah sprintf("%03s", $urutan); berguna untuk membuat string menjadi 3 karakter
         // misalnya perintah sprintf("%03s", 15); maka akan menghasilkan '015'
@@ -80,16 +97,9 @@ if (isset($_REQUEST["fungsi"])) {
         // Final Nomer Tiket
         $no_antrianpoli = $huruf . sprintf("%03s", $urutan);
         //ambil tanggal sekarang + 1
-        function manipulasiTanggal($tgl, $jumlah = 1, $format = 'days')
-        {
-            $currentDate = $tgl;
-            return date('Y-m-d H:i:s', strtotime($jumlah . ' ' . $format, strtotime($currentDate)));
-        }
-        $waktu = date("Y-m-d H:i:s");
-        $bookday = manipulasiTanggal($tgl, '1', 'days');
-        $status = "Belum";
+
         //Eksekusi Tiket
-        $sql = "SELECT * FROM antrian WHERE id_users = '$id_users' AND waktu LIKE '$tgl%'";
+        $sql = "SELECT * FROM antrian WHERE id_users = '$id_users' AND waktu LIKE '$lineday%'";
         $q = mysqli_query($koneksi, $sql);
         if (mysqli_num_rows($q) == 0) {
             $sql = "INSERT INTO antrian ( no_antrian, waktu, status, id_poli, id_users) VALUES ('$no_antrianpoli', '$bookday', '$status', '$id_poli', '$id_users')";
