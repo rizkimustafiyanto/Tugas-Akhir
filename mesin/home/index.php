@@ -43,9 +43,9 @@ require_once '../../admin/helper/connection.php';
                 $no_antrianpoli = $huruf . $addNol . $incrementKode;
 
                 //Batas Tiket
-                $btiket = mysqli_query($connection, "SELECT COUNT(*) as jumlah FROM antrian WHERE id_users == 0 AND waktu LIKE '$tgl%'");
+                $btiket = mysqli_query($connection, "SELECT COUNT(*) as jumlah FROM antrian WHERE id_users = 0 AND waktu LIKE '$tgl%'");
                 $rowtiket = mysqli_fetch_assoc($btiket);
-                $batastiket = $row['jumlah'];
+                $batastiket = $rowtiket['jumlah'];
 
             ?>
                 <?php if ($statu != 2 && $batastiket <= 4) { ?>
