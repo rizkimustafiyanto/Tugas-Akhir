@@ -54,7 +54,7 @@ $loket = $_GET['loket'];
 
     <div class="container">
         <div class="content">
-            <h2>RSUD JOMBANG</h2>
+            <h2>RSUD PUSDIK BHAYANGKARA</h2>
             <hr>
             <div class="content-poli">
                 <h1>Loket <?php echo $loket; ?></h1>
